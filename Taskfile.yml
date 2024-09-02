@@ -1,0 +1,14 @@
+version: "3"
+tasks:
+  run:
+    aliases:
+      - r
+    desc: "Run app"
+    cmds:
+      - go run cmd/sso/main.go --config=./config/local.yml
+
+  build:
+    aliases:
+      - b
+    desc: "build app"
+    cmds:

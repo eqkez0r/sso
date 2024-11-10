@@ -3,6 +3,9 @@ package app
 import (
 	grpcapp "github.com/eqkez0r/sso/internal/app/grpc"
 	"github.com/eqkez0r/sso/internal/logger"
+	"github.com/eqkez0r/sso/internal/services/auth"
+	"github.com/eqkez0r/sso/storage/postgres"
+
 	"time"
 )
 
@@ -15,11 +18,16 @@ func New(
 	grpcPort int,
 	storagePath string,
 	tokenTTL time.Duration,
-) *App {
+) (*App, error) {
+	storage, err := postgres.New(storagePath)
+	if err != nil {
+		return nil, err
+	}
 
-	grpcApp := grpcapp.New(log, grpcPort)
+	authservice := auth.New(log, storage, storage, storage, tokenTTL)
+	grpcApp := grpcapp.New(log, grpcPort, authservice)
 
 	return &App{
 		GRPCSrv: grpcApp,
-	}
+	}, nil
 }
